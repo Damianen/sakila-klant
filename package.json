@@ -1,0 +1,11 @@
+{
+  "name": "sakila-klant",
+  "version": "1.0.0",
+  "description": "fullstack js application with sakila database as the foundation specificly made for customers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Damian Buskens",
+  "license": "ISC"
+}
