@@ -1,0 +1,11 @@
+<% /* receives items */ %>
+<h1>Films</h1>
+<ul>
+  <% items.forEach(f => { %>
+    <li>
+      <a href="/films/<%= f.film_id %>"><%= f.title %></a>
+      (<%= f.release_year %>) — <%= f.language %>
+    </li>
+  <% }) %>
+</ul>
+
