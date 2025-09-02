@@ -2,7 +2,7 @@
   "name": "sakila-klant",
   "version": "1.0.0",
   "description": "fullstack js application with sakila database as the foundation specificly made for customers",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
     "mysql2": "^3.14.3"
   }
