@@ -1,0 +1,19 @@
+<nav style="display:flex;gap:1rem;align-items:center;padding:0.75rem 1rem;border-bottom:1px solid #eee;">
+  <a href="/" style="text-decoration:none;font-weight:700;">Sakila</a>
+  <a href="/films">Films</a>
+  <a href="/actors">Actors</a>
+
+  <div style="margin-left:auto;display:flex;gap:0.75rem;align-items:center;">
+  <% if (isAuthenticated) { %>
+  <span>Signed in as <strong><%= currentUser.email %></strong></span>
+  <a href="/users/profile">Profile</a>
+  <form method="post" action="/auth/logout" style="margin:0;">
+    <button type="submit">Log out</button>
+  </form>
+<% } else { %>
+  <a href="/auth/login">Log in</a>
+  <a href="/auth/signup">Sign up</a>
+<% } %>
+  </div>
+</nav>
+

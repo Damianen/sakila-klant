@@ -1,0 +1,10 @@
+<% /* receives items */ %>
+<h1>Actors</h1>
+<ul>
+  <% items.forEach(a => { %>
+    <li>
+      <a href="/actors/<%= a.actor_id %>"><%= a.first_name %> <%= a.last_name %></a>
+    </li>
+  <% }) %>
+</ul>
+

@@ -1,0 +1,19 @@
+<h1>Your Profile</h1>
+
+<% if (user) { %>
+  <div style="border:1px solid #ddd;padding:1rem;border-radius:8px;max-width:400px;">
+    <p><strong>User ID:</strong> <%= user.user_id %></p>
+    <p><strong>Email:</strong> <%= user.email %></p>
+
+    <% if (user.first_name || user.last_name) { %>
+      <p><strong>Name:</strong> <%= user.first_name || '' %> <%= user.last_name || '' %></p>
+    <% } %>
+
+    <% if (user.phone) { %>
+      <p><strong>Phone:</strong> <%= user.phone %></p>
+    <% } %>
+  </div>
+<% } else { %>
+  <p>No profile data available.</p>
+<% } %>
+

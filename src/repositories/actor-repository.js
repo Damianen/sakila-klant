@@ -1,17 +1,17 @@
 import pool from "../db/pool.js";
 
-export function GetAllFilms(callback) {
-    const sql = "SELECT * FROM film";
+export function GetAllActors(callback) {
+    const sql = "SELECT * FROM actor";
     pool.query(sql, (err, rows) => {
         if (err) callback(err);
         callback(null, rows);
     });
 }
 
-export function GetFilmById(id, callback) {
-    const sql = "SELECT * FROM film WHERE film_id = ?";
+export function GetActorById(id, callback) {
+    const sql = "SELECT * FROM actor WHERE actor_id = ?";
     pool.query(sql, [id], (err, rows) => {
         if (err) callback(err);
-        callback(rows[0]);
+        callback(null, rows);
     });
 }
