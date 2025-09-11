@@ -1,34 +1,34 @@
 import pool from "../db/pool.js";
 
-export function listAll({ offset = 0, limit = 50 }, cb) {
+export function listAll({ offset = 0, limit = 50 }, callback) {
   const sql = `
     SELECT f.film_id, f.title, f.description, f.release_year
     FROM film f
     ORDER BY f.title ASC
     LIMIT ? OFFSET ?
   `;
-  pool.query(sql, [limit, offset], (err, rows) => cb(err, rows || []));
+  pool.query(sql, [limit, offset], (err, rows) => callback(err, rows || []));
 }
 
-export function countAll(cb) {
+export function countAll(callback) {
   pool.query('SELECT COUNT(*) AS total FROM film', (err, rows) => {
-    if (err) return cb(err);
-    cb(null, rows[0]?.total || 0);
+    if (err) return callback(err);
+    callback(null, rows[0]?.total || 0);
   });
 }
 export function GetFilmById(id, callback) {
-    const sql = `SELECT 
+    const sql = `SELECT
                       f.film_id,
                       f.title,
                       f.description,
                       f.release_year,
                       l.name AS language,
                       CONCAT(
-                          '[', 
+                          '[',
                           GROUP_CONCAT(
                               JSON_OBJECT('id', a.actor_id, 'name', CONCAT(a.first_name, ' ', a.last_name))
                               ORDER BY a.last_name
-                          ), 
+                          ),
                           ']'
                       ) AS actors,
                       f.length,
@@ -40,8 +40,8 @@ export function GetFilmById(id, callback) {
                   JOIN film_actor fa ON f.film_id = fa.film_id
                   JOIN actor a ON fa.actor_id = a.actor_id
                   WHERE f.film_id = ?
-                  GROUP BY 
-                      f.film_id, f.title, f.description, f.release_year, 
+                  GROUP BY
+                      f.film_id, f.title, f.description, f.release_year,
                       l.name, f.length, f.rental_rate, f.replacement_cost, f.special_features;`;
     pool.query(sql, [id], (err, rows) => {
         if (err) callback(err);
@@ -50,7 +50,7 @@ export function GetFilmById(id, callback) {
 }
 
 
-export function listByCategory({ categoryId, categoryName, offset = 0, limit = 50 }, cb) {
+export function listByCategory({ categoryId, categoryName, offset = 0, limit = 50 }, callback) {
   const byId = `
     SELECT f.film_id, f.title, f.description, f.release_year
     FROM film f
@@ -70,13 +70,13 @@ export function listByCategory({ categoryId, categoryName, offset = 0, limit = 5
     LIMIT ? OFFSET ?
   `;
   if (categoryId) {
-    pool.query(byId, [categoryId, limit, offset], (err, rows) => cb(err, rows || []));
+    pool.query(byId, [categoryId, limit, offset], (err, rows) => callback(err, rows || []));
   } else {
-    pool.query(byName, [categoryName, limit, offset], (err, rows) => cb(err, rows || []));
+    pool.query(byName, [categoryName, limit, offset], (err, rows) => callback(err, rows || []));
   }
 }
 
-export function countByCategory({ categoryId, categoryName }, cb) {
+export function countByCategory({ categoryId, categoryName }, callback) {
   const byId = `
     SELECT COUNT(*) AS total
     FROM film f
@@ -93,7 +93,7 @@ export function countByCategory({ categoryId, categoryName }, cb) {
   const sql = categoryId ? byId : byName;
   const param = categoryId ? [categoryId] : [categoryName];
   pool.query(sql, param, (err, rows) => {
-    if (err) return cb(err);
-    cb(null, rows[0]?.total || 0);
+    if (err) return callback(err);
+    callback(null, rows[0]?.total || 0);
   });
 }

@@ -21,7 +21,9 @@ export function postUpdateProfile(req, res, next) {
       return next(err);
     }
 
-    const payload = { sub: publicUser.user_id, email: publicUser.email };
+    const payload = { sub: publicUser.user_id, email: publicUser.email,
+                      first_name: publicUser.first_name, last_name: publicUser.last_name,
+                      phone: publicUser.phone };
     signToken(payload, (err2, token) => {
       if (err2) return next(err2);
       setAuthCookie(res, token);

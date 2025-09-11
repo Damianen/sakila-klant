@@ -15,17 +15,17 @@ export function toPublicUser(dbUser) {
   };
 }
 
-export function getById(user_id, cb) {
+export function getById(user_id, callback) {
   userRepository.findById(user_id, (err, row) => {
-    if (err) return cb(err);
-    cb(null, toPublicUser(row));
+    if (err) return callback(err);
+    callback(null, toPublicUser(row));
   });
 }
 
-export function updateAccount(user_id, { email, first_name, last_name, phone, new_password }, cb) {
+export function updateAccount(user_id, { email, first_name, last_name, phone, new_password }, callback) {
   userRepository.findById(user_id, (err, current) => {
-    if (err) return cb(err);
-    if (!current) return cb(new Error('User not found'));
+    if (err) return callback(err);
+    if (!current) return callback(new Error('User not found'));
 
     function proceedWith(hashOrNull) {
       const patch = {
@@ -38,11 +38,11 @@ export function updateAccount(user_id, { email, first_name, last_name, phone, ne
 
       if (email && email !== current.email) {
         userRepository.findByEmail(email, (err2, existing) => {
-          if (err2) return cb(err2);
+          if (err2) return callback(err2);
           if (existing) {
             const e = new Error('Email already in use.');
             e.code = 'EMAIL_TAKEN';
-            return cb(e);
+            return callback(e);
           }
           userRepository.updateById(user_id, patch, afterUpdate);
         });
@@ -51,10 +51,10 @@ export function updateAccount(user_id, { email, first_name, last_name, phone, ne
       }
 
       function afterUpdate(err3) {
-        if (err3) return cb(err3);
+        if (err3) return callback(err3);
         userRepository.findById(user_id, (err4, updatedRow) => {
-          if (err4) return cb(err4);
-          cb(null, toPublicUser(updatedRow));
+          if (err4) return callback(err4);
+          callback(null, toPublicUser(updatedRow));
         });
       }
     }
@@ -62,7 +62,7 @@ export function updateAccount(user_id, { email, first_name, last_name, phone, ne
     if (new_password && new_password.length > 0) {
       const rounds = parseInt(process.env.BCRYPT_ROUNDS || '10', 10);
       bcrypt.hash(new_password, rounds, (errH, hash) => {
-        if (errH) return cb(errH);
+        if (errH) return callback(errH);
             proceedWith(hash);
       });
     } else {
@@ -71,11 +71,11 @@ export function updateAccount(user_id, { email, first_name, last_name, phone, ne
   });
 }
 
-export function removeAccount(user_id, cb) {
+export function removeAccount(user_id, callback) {
   userRepository.deleteById(user_id, (err, res) => {
-    if (err) return cb(err);
-    if (res.affectedRows === 0) return cb(new Error('User not found'));
-    cb(null, { ok: true });
+    if (err) return callback(err);
+    if (res.affectedRows === 0) return callback(new Error('User not found'));
+    callback(null, { ok: true });
   });
 }
 

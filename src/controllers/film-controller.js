@@ -1,7 +1,7 @@
 import * as FilmService from "../services/film-service.js";
 
 export async function ListFilms(req, res, next) {
-    const page = Math.max(parseInt(req.query.page || '1', 10), 1);
+  const page = Math.max(parseInt(req.query.page || '1', 10), 1);
   const size = Math.min(Math.max(parseInt(req.query.size || '20', 10), 1), 100);
 
   const categoryId = req.query.category_id ? Number(req.query.category_id) : null;

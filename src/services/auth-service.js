@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { findByEmail, create as createUser } from '../repositories/user-repository.js';
+import { countAll } from '../repositories/film-repository.js';
 
 function toPublicUser(dbUser) {
   if (!dbUser) return null;
@@ -15,25 +16,25 @@ function toPublicUser(dbUser) {
   };
 }
 
-export function register({ email, password, first_name, last_name, phone }, cb) {
-  if (!email || !password) return cb(new Error('Email and password are required.'));
+export function register({ email, password, first_name, last_name, phone }, callback) {
+  if (!email || !password) return callback(new Error('Email and password are required.'));
 
   findByEmail(email, (err, existing) => {
-    if (err) return cb(err);
+    if (err) return callback(err);
     if (existing) {
       const e = new Error('Email already registered.');
       e.code = 'EMAIL_TAKEN';
-      return cb(e);
+      return callback(e);
     }
 
     const rounds = parseInt(process.env.BCRYPT_ROUNDS || '10', 10);
     bcrypt.hash(password, rounds, (err2, hash) => {
-      if (err2) return cb(err2);
+      if (err2) return callback(err2);
 
       createUser(
         { email, password_hash: hash, first_name, last_name, phone },
         (err3, created) => {
-          if (err3) return cb(err3);
+          if (err3) return callback(err3);
 
           findByEmail(email, (err4, userRow) => {
             if (err4) return cb(err4);
@@ -45,15 +46,15 @@ export function register({ email, password, first_name, last_name, phone }, cb) 
   });
 }
 
-export function authenticate({ email, password }, cb) {
-  if (!email || !password) return cb(new Error('Email and password are required.'));
+export function authenticate({ email, password }, callback) {
+  if (!email || !password) return callback(new Error('Email and password are required.'));
 
   findByEmail(email, (err, userRow) => {
-    if (err) return cb(err);
+    if (err) return callback(err);
     if (!userRow) {
       const e = new Error('Invalid credentials.');
       e.code = 'AUTH_FAILED';
-      return cb(e);
+      return callback(e);
     }
 
     const hash = Buffer.isBuffer(userRow.password_hash)
@@ -61,13 +62,13 @@ export function authenticate({ email, password }, cb) {
         : userRow.password_hash;
 
     bcrypt.compare(String(password), hash, (err2, ok) => {
-      if (err2) return cb(err2);
+      if (err2) return callback(err2);
       if (!ok) {
         const e = new Error('Invalid credentials.');
         e.code = 'AUTH_FAILED';
-        return cb(e);
+        return callback(e);
       }
-      cb(null, toPublicUser(userRow));
+      callback(null, toPublicUser(userRow));
     });
   });
 }
