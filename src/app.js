@@ -12,6 +12,8 @@ import authRoutes from './routes/auth-routes.js';
 import protectedRoutes from './routes/protected-routes.js';
 import currentUser from './middlewares/current-user.js';
 import userRoutes from './routes/user-routes.js';
+import reservationRoutes from './routes/reservation-routes.js';
+import categoriesMiddleware from './middlewares/categories.js';
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -28,12 +30,15 @@ app.use(currentUser)
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 
+app.use(categoriesMiddleware);
+
 app.set('layout', 'layouts/main');
 app.use("/films", filmRoutes);
 app.use("/actors", actorRoutes);
 app.use('/auth', authRoutes);
 app.use('/account', protectedRoutes);
 app.use('/users', userRoutes);
+app.use('/reservations', reservationRoutes);
 
 app.get('/', (req, res) => res.render('home'));
 

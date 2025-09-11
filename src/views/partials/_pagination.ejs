@@ -1,0 +1,41 @@
+<%
+const sep = baseQuery && baseQuery.length ? '&' : '';
+function hrefFor(p){ return '/films?' + baseQuery + (sep || (baseQuery ? '' : '')) + (baseQuery ? '&' : '') + 'page=' + p; }
+
+const baseBtn = 'px-3 py-1 bg-indigo-500 rounded-md text-sm hover:bg-gray-50 focus:outline-none';
+const disabledBtn = 'pointer-events-none opacity-50';
+const pageBtn = baseBtn;
+const currentPageBtn = `${baseBtn} font-semibold outline-2 outline-offset-1 outline-indigo-500`;
+%>
+
+<nav aria-label="Pagination" class="flex gap-2 items-center flex-wrap mt-4">
+  <a href="<%= hasPrev ? hrefFor(prevPage) : '#' %>"
+     aria-disabled="<%= hasPrev ? 'false' : 'true' %>"
+     class="<%= hasPrev ? baseBtn : baseBtn + ' ' + disabledBtn %>">
+    ‹ Prev
+  </a>
+
+  <% if (pages[0] > 1) { %>
+    <a href="<%= hrefFor(1) %>" class="<%= pageBtn %>">1</a>
+    <% if (pages[0] > 2) { %><span class="px-1">…</span><% } %>
+  <% } %>
+
+  <% pages.forEach(function(p){ %>
+    <a href="<%= hrefFor(p) %>"
+       aria-current="<%= p === page ? 'page' : 'false' %>"
+       class="<%= p === page ? currentPageBtn : pageBtn %>">
+      <%= p %>
+    </a>
+  <% }); %>
+
+  <% if (pages[pages.length-1] < totalPages) { %>
+    <% if (pages[pages.length-1] < totalPages - 1) { %><span class="px-1">…</span><% } %>
+    <a href="<%= hrefFor(totalPages) %>" class="<%= pageBtn %>"><%= totalPages %></a>
+  <% } %>
+
+  <a href="<%= hasNext ? hrefFor(nextPage) : '#' %>"
+     aria-disabled="<%= hasNext ? 'false' : 'true' %>"
+     class="<%= hasNext ? baseBtn : baseBtn + ' ' + disabledBtn %>">
+    Next ›
+  </a>
+</nav>

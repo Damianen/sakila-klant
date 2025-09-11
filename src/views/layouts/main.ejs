@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sakila App</title>
   <link rel="stylesheet" href="/css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
-  <%- include('../partials/_navbar') %>
-  <main style="padding:1rem;">
+  <main class="bg-gray-900 min-h-screen flex flex-col justify-between">
+    <%- include('../partials/_navbar') %>
     <%- body %>
+    <%- include('../partials/_footer') %>
   </main>
 </body>
 </html>

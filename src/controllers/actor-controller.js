@@ -11,6 +11,7 @@ export async function GetActor(req, res, next) {
     const id = req.params['id'];
     ActorService.GetActorById(id, (err, actor) => {
         if (err) next(err)
+        actor.movies = JSON.parse(actor.movies);
         res.render("actors/actor", { item: actor });
     });
 }

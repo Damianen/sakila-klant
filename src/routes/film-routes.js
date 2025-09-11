@@ -5,5 +5,6 @@ const router = Router();
 
 router.get("/", FilmController.ListFilms);
 router.get("/:id", FilmController.GetFilm);
+router.get("/:id/available", FilmController.GetAvailable);
 
 export default router;

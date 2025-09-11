@@ -35,7 +35,6 @@ export function register({ email, password, first_name, last_name, phone }, cb) 
         (err3, created) => {
           if (err3) return cb(err3);
 
-          // Fetch the created user to return a public profile (optional)
           findByEmail(email, (err4, userRow) => {
             if (err4) return cb(err4);
             cb(null, toPublicUser(userRow));
@@ -72,4 +71,3 @@ export function authenticate({ email, password }, cb) {
     });
   });
 }
-

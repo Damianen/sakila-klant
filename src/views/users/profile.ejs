@@ -1,19 +1,30 @@
-<h1>Your Profile</h1>
-
-<% if (user) { %>
-  <div style="border:1px solid #ddd;padding:1rem;border-radius:8px;max-width:400px;">
-    <p><strong>User ID:</strong> <%= user.user_id %></p>
-    <p><strong>Email:</strong> <%= user.email %></p>
-
-    <% if (user.first_name || user.last_name) { %>
-      <p><strong>Name:</strong> <%= user.first_name || '' %> <%= user.last_name || '' %></p>
-    <% } %>
-
-    <% if (user.phone) { %>
-      <p><strong>Phone:</strong> <%= user.phone %></p>
-    <% } %>
+<div class="mx-auto flex flex-col max-w-7xl items-center justify-between gap-x-6 p-6 lg:px-8">
+  <div class="px-4 sm:px-0">
+    <h3 class="text-base/7 font-semibold text-white">Account information</h3>
   </div>
-<% } else { %>
-  <p>No profile data available.</p>
-<% } %>
+  <div class="mt-6 border-t border-white/5">
+    <dl class="divide-y divide-white/5">
+      <div class="bg-gray-800/25 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3">
+        <dt class="text-sm/6 font-medium text-white">Full name</dt>
+        <dd class="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0"><%= user.first_name || '' %> <%= user.last_name || '' %></dd>
+      </div>
+      <div class="bg-gray-900 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3">
+        <dt class="text-sm/6 font-medium text-white">Phone number</dt>
+        <dd class="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0"><%= user.phone %></dd>
+      </div>
+      <div class="bg-gray-800/25 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3">
+        <dt class="text-sm/6 font-medium text-white">Email address</dt>
+        <dd class="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0"><%= user.email %></dd>
+      </div>
+      <div class="bg-gray-900 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3">
+          <a href="/users/edit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">edit account</a>
+          <form method="post" action="/users/delete" onsubmit="return confirm('Delete your account? This cannot be undone.');">
+            <button type="submit" class="rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">Delete account</button>
+          </form>
+          <a href="/reservations" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Reservations</a>
+      </div>
+    </dl>
+  </div>
+</div>
+
 

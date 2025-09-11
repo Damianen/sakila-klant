@@ -1,20 +1,20 @@
 import jwt from 'jsonwebtoken';
 import { register, authenticate } from '../services/auth-service.js';
 
-function signToken(payload, cb) {
+export function signToken(payload, cb) {
   const secret = process.env.JWT_SECRET;
-  const expiresIn = process.env.JWT_EXPIRES_IN || '1d';
+  const expiresIn = process.env.JWT_EXPIRES_IN || '0d';
   jwt.sign(payload, secret, { expiresIn }, cb);
 }
 
-function setAuthCookie(res, token) {
+export function setAuthCookie(res, token) {
   const name   = process.env.COOKIE_NAME || 'auth';
   const secure = String(process.env.COOKIE_SECURE || 'false') === 'true';
   res.cookie(name, token, {
     httpOnly: true,
     sameSite: 'lax',
     secure,
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 23 * 60 * 60 * 1000,
     path: '/',
   });
 }
@@ -35,11 +35,13 @@ export function postSignup(req, res, next) {
       if (err.code === 'EMAIL_TAKEN') return res.status(409).send(err.message);
       return next(err);
     }
-    const payload = { sub: publicUser.user_id, email: publicUser.email };
+    const payload = { sub: publicUser.user_id, email: publicUser.email, 
+                      first_name: publicUser.first_name, last_name: publicUser.last_name, 
+                      phone: publicUser.phone };
     signToken(payload, (err2, token) => {
       if (err2) return next(err2);
       setAuthCookie(res, token);
-      res.redirect('/me'); // or res.json({ token, user: publicUser })
+      res.redirect('/users/profile');
     });
   });
 }
@@ -52,11 +54,13 @@ export function postLogin(req, res, next) {
       if (err.code === 'AUTH_FAILED') return res.status(401).send(err.message);
       return next(err);
     }
-    const payload = { sub: publicUser.user_id, email: publicUser.email };
+    const payload = { sub: publicUser.user_id, email: publicUser.email, 
+                      first_name: publicUser.first_name, last_name: publicUser.last_name, 
+                      phone: publicUser.phone };
     signToken(payload, (err2, token) => {
       if (err2) return next(err2);
       setAuthCookie(res, token);
-      res.redirect('/me'); // or res.json({ token, user: publicUser })
+      res.redirect('/users/profile');
     });
   });
 }

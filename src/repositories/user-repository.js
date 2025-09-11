@@ -8,6 +8,21 @@ export function findByEmail(email, cb) {
   );
 }
 
+export function findById(user_id, cb) {
+  pool.query(
+    'SELECT * FROM app_user WHERE user_id = ? LIMIT 1',
+    [user_id],
+    (err, rows) => {
+      if (err) return cb(err);
+      const row = rows && rows[0] ? rows[0] : null;
+      if (row && row.password_hash != null && Buffer.isBuffer(row.password_hash)) {
+        row.password_hash = row.password_hash.toString('utf8');
+      }
+      cb(null, row);
+    }
+  );
+}
+
 export function create(user, cb) {
   const sql = `
     INSERT INTO app_user (email, password_hash, first_name, last_name, phone)
@@ -26,3 +41,30 @@ export function create(user, cb) {
   });
 }
 
+export function updateById(user_id, patch, cb) {
+  const fields = [];
+  const values = [];
+  if (patch.email !== undefined)       { fields.push('email = ?');         values.push(patch.email); }
+  if (patch.password_hash !== undefined){ fields.push('password_hash = ?'); values.push(patch.password_hash); }
+  if (patch.first_name !== undefined)  { fields.push('first_name = ?');     values.push(patch.first_name || null); }
+  if (patch.last_name !== undefined)   { fields.push('last_name = ?');      values.push(patch.last_name  || null); }
+  if (patch.phone !== undefined)       { fields.push('phone = ?');          values.push(patch.phone      || null); }
+  if (patch.is_active !== undefined)   { fields.push('is_active = ?');      values.push(patch.is_active ? 1 : 0); }
+
+  if (fields.length === 0) return cb(null, { affectedRows: 0 });
+
+  const sql = `UPDATE app_user SET ${fields.join(', ')} WHERE user_id = ?`;
+  values.push(user_id);
+
+  pool.query(sql, values, (err, result) => {
+    if (err) return cb(err);
+    cb(null, { affectedRows: result.affectedRows });
+  });
+}
+
+export function deleteById(user_id, cb) {
+  pool.query('DELETE FROM app_user WHERE user_id = ?', [user_id], (err, result) => {
+    if (err) return cb(err);
+    cb(null, { affectedRows: result.affectedRows });
+  });
+}

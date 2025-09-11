@@ -1,11 +1,67 @@
 <% /* receives items */ %>
-<h1>Films</h1>
-<ul>
-  <% items.forEach(f => { %>
-    <li>
-      <a href="/films/<%= f.film_id %>"><%= f.title %></a>
-      (<%= f.release_year %>) — <%= f.language %>
-    </li>
+<div class="mx-auto flex flex-col gap-10 max-w-7xl items-center justify-between gap-x-6 p-6 lg:px-8">
+<h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">films</h2>
+
+<form action="/films" method="get" class="flex items-center gap-2">
+  <label for="category_id" class="text-sm font-medium text-white text-xl">Category:</label>
+  <select id="category_id" name="category_id"
+          onchange="this.form.submit()"
+          class="px-1 py-1 rounded-md text-white bg-indigo-500 border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+    <option value="">All</option>
+    <% const _cats = Array.isArray(categories) ? categories : []; %>
+    <% const selCat = (typeof selectedCategoryId !== 'undefined' ? selectedCategoryId : null); %>
+    <% _cats.forEach(function(c){ %>
+      <option value="<%= c.category_id %>" <%= (selCat == c.category_id ? 'selected' : '') %>>
+        <%= c.name %>
+      </option>
+    <% }) %>
+  </select>
+
+  <label for="size" class="text-sm font-medium text-white text-xl">Per page:</label>
+  <select id="size" name="size"
+          onchange="this.form.submit()"
+          class="px-1 py-1 rounded-md text-white bg-indigo-500 border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+    <% [10,20,50,100].forEach(function(s){ %>
+      <option value="<%= s %>" <%= (typeof size !== 'undefined' && Number(size) === s) ? 'selected' : '' %>><%= s %></option>
+    <% }) %>
+  </select>
+
+  <input type="hidden" name="page" value="1" />
+</form>
+
+<ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
+  <% (items || []).forEach(function(f){ %>
+  <li class="relative">
+    <div class="group overflow-hidden rounded-lg bg-gray-800 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-500">
+      <img
+        src="https://picsum.photos/seed/<%= f.film_id %>/500/750"
+        alt="<%= f.title %> poster"
+        class="pointer-events-none w-full aspect-[2/3] rounded-lg object-cover outline outline-1 -outline-offset-1 outline-white/10 group-hover:opacity-75"
+      />
+      <a href="/films/<%= f.film_id %>" class="absolute inset-0 focus:outline-none">
+        <span class="sr-only"><%= f.title %> poster</span>
+      </a>
+    </div>
+    <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-white"><%= f.title %></p>
+    <p class="pointer-events-none block text-sm font-medium text-gray-400"><%= f.release_year %></p>
+  </li>
   <% }) %>
 </ul>
+
+
+
+<p class="text-sm font-medium text-white text-xl">Page <%= page %> of <%= totalPages %> — <%= total %> films total</p>
+
+<%- include('../partials/_pagination', {
+  page,
+  totalPages,
+  pages,
+  hasPrev,
+  hasNext,
+  prevPage,
+  nextPage,
+  baseQuery
+}) %>
+
+</div>
 
