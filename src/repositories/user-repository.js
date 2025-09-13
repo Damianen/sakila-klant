@@ -23,7 +23,7 @@ export function findById(user_id, callback) {
   );
 }
 
-export function create(user, cb) {
+export function create(user, callback) {
   const sql = `
     INSERT INTO app_user (email, password_hash, first_name, last_name, phone)
     VALUES (?, ?, ?, ?, ?)
