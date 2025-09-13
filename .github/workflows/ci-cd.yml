@@ -1,0 +1,82 @@
+name: CI & Promote to release
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # needed to push to release branch
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      # Provide minimal env for your tests (adjust/remove as needed)
+      - name: Run tests
+        env:
+          JWT_SECRET: test_secret
+          JWT_EXPIRES_IN: 1d
+          COOKIE_NAME: auth
+          COOKIE_SECURE: "false"
+        run: npm test -- --run
+
+  promote:
+    needs: test
+    if: ${{ needs.test.result == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git identity
+        run: |
+          git config user.name  "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Make sure release branch exists locally
+        run: |
+          # fetch both branches if they exist
+          git fetch origin main || true
+          git fetch origin release || true
+          # create or switch to local release branch
+          if git show-ref --verify --quiet refs/heads/release; then
+            git checkout release
+          else
+            # create local branch (from remote if exists, otherwise empty)
+            if git ls-remote --exit-code --heads origin release >/dev/null 2>&1; then
+              git checkout -b release origin/release
+            else
+              git checkout -b release
+            fi
+          fi
+
+      - name: Fast-forward release to main (force-align)
+        run: |
+          # Ensure we have latest main
+          git fetch origin main
+          # Reset release to main's exact tip
+          git reset --hard origin/main
+          # Push to remote release (force to overwrite if diverged)
+          git push origin release --force
+

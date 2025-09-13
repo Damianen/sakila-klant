@@ -38,7 +38,7 @@ export function register({ email, password, first_name, last_name, phone }, call
 
           findByEmail(email, (err4, userRow) => {
             if (err4) return cb(err4);
-            cb(null, toPublicUser(userRow));
+            callback(null, toPublicUser(userRow));
           });
         }
       );
