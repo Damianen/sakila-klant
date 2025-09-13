@@ -41,7 +41,7 @@ export function postSignup(req, res, next) {
     signToken(payload, (err2, token) => {
       if (err2) return next(err2);
       setAuthCookie(res, token);
-      res.redirect('/');
+      res.redirect('/users/profile');
     });
   });
 }
