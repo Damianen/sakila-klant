@@ -16,7 +16,7 @@ export function postUpdateProfile(req, res, next) {
   userService.updateAccount(uid, { email, first_name, last_name, phone, new_password }, (err, publicUser) => {
     if (err) {
       if (err.code === 'EMAIL_TAKEN') {
-        return res.status(409).render('users/edit', { user: { ...req.body, user_id: uid }, error: err.message });
+        return res.status(409).render('users/edit', { user: { ...req.body, user_id: uid }, error: err });
       }
       return next(err);
     }

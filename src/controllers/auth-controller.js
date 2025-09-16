@@ -20,11 +20,11 @@ export function setAuthCookie(res, token) {
 }
 
 export function getSignup(req, res) {
-  res.render('auth/signup');
+  res.render('auth/signup', {error: null});
 }
 
 export function getLogin(req, res) {
-  res.render('auth/login');
+  res.render('auth/login', {error: null});
 }
 
 export function postSignup(req, res, next) {
@@ -32,7 +32,7 @@ export function postSignup(req, res, next) {
 
   register({ email, password, first_name, last_name, phone }, (err, publicUser) => {
     if (err) {
-      if (err.code === 'EMAIL_TAKEN') return res.status(409).send(err.message);
+      if (err.code === 'EMAIL_TAKEN') return res.render('auth/signup', {error: err});
       return next(err);
     }
     const payload = { sub: publicUser.user_id, email: publicUser.email,
@@ -51,7 +51,7 @@ export function postLogin(req, res, next) {
 
   authenticate({ email, password }, (err, publicUser) => {
     if (err) {
-      if (err.code === 'AUTH_FAILED') return res.status(401).send(err.message);
+      if (err.code === 'AUTH_FAILED') return res.render('auth/login', {error: err});
       return next(err);
     }
     const payload = { sub: publicUser.user_id, email: publicUser.email,

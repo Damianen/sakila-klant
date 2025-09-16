@@ -40,6 +40,7 @@ app.use('/account', protectedRoutes);
 app.use('/users', userRoutes);
 app.use('/reservations', reservationRoutes);
 
+app.get('/about', (req, res) => res.render('about'));
 app.get('/', (req, res) => res.render('home'));
 
 app.use(notFound)
